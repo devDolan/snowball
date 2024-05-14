@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowball</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body id="index-body">
+    <nav>
+        <ul class="wrapper">
+            <li>
+                <img id="dropdown-btn" 
+                class="logo" src="../public/images/logo_transparent.png" 
+                alt="Logo">
+            </li>
+            <li><a href="index.html"><u>Dashboard</u></a></li>
+            <li><a href="schedule.html">Schedule</a></li>
+            <li><a href="investing.html">Investing</a></li>
+            <li><a href="help.html">Help</a></li>
+        </ul>
+    </nav>
+
+    <div class="wrapper dropdown">
+        <div class="selected">
+            <span>Weekly</span>
+            <img src="./images/angle-down.png" alt="Dropdown Icon">
+        </div>
+        <div class="options hide">
+            <li class="option">Weekly</li>
+            <li class="option">Fortnightly</li>
+            <li class="option">Monthly</li>
+        </div>
+    </div>
+
+    <section id="dashboard" class="wrapper">
+        <div class="wrapper-flex cards">
+            <div>
+                <div id="income-card" class="card">
+                    <h3 class="card-title">Income</h3>
+                    <p class="card-amount">$0.00</p>
+                </div>
+                <button id="income-btn" class="fn-btn add"></button>
+                <form id="income" class="hide">
+                    <div>
+                        <label for="income-name">Name</label>
+                        <input type="text" id="income-name" name="name">
+                    </div>
+                    
+                    <div>
+                        <label for="income-amount">Amount</label>
+                        <input type="text" id="income-amount" name="amount">
+                    </div>
+        
+                    <div>
+                        <label for="income-date">Date</label>
+                        <div>
+                            <input type="date" id="income-date" name="date">    
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4>Frequency</h4>
+                        <div>
+                            <button type="button" value="weekly" 
+                            class="freq-btn">
+                                Weekly
+                            </button>
+                            <button type="button" value="fortnightly" 
+                            class="freq-btn">
+                                Fortnightly
+                            </button>
+                            <button type="button" value="monthly" 
+                            class="freq-btn">
+                                Monthly
+                            </button>
+                            <input type="hidden" name="frequency" 
+                            id="income-frequency" value="weekly">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <span class="form-msg hide">
+                            Please complete all fields
+                        </span>
+                        <button class="fn-btn submit" type="submit"></button>
+                    </div>
+                </form>
+            </div>
+            
+            <div>
+                <div id="expenses-card" class="card">
+                    <h3 class="card-title">Expenses</h3>
+                    <p class="card-amount">$0.00</p>
+                </div>
+                <button id="expenses-btn" class="fn-btn add"></button>
+                <form id="expenses" class="hide">
+                    <div>
+                        <label for="expense-name">Name</label>
+                        <input type="text" id="expense-name" name="name">
+                    </div>
+                    
+                    <div>
+                        <label for="expense-amount">Amount</label>
+                        <input type="text" id="expense-amount" name="amount">
+                    </div>
+        
+                    <div>
+                        <label for="expense-date">Date</label>
+                        <div>
+                            <input type="date" id="expense-date" name="date">    
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4>Frequency</h4>
+                        <div>
+                            <button type="button" value="weekly" 
+                            class="freq-btn">
+                                Weekly
+                            </button>
+                            <button type="button" value="fortnightly" 
+                            class="freq-btn">
+                                Fortnightly
+                            </button>
+                            <button type="button" value="monthly" 
+                            class="freq-btn">
+                                Monthly
+                            </button>
+                            <input type="hidden" name="frequency" 
+                            id="expense-frequency" value="weekly">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <span class="form-msg hide">
+                            Please complete all fields
+                        </span>
+                        <button class="fn-btn submit" type="submit"></button>
+                    </div>
+                </form>
+            </div>
+    
+            <div>
+                <div id="balance-card" class="card">
+                    <h3 class="card-title">Balance</h3>
+                    <p class="card-amount">$0.00</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="overview">
+            <h3>Overview</h3>
+            <div id="visual-bar">
+                <div class="income-overview"></div>
+                <div class="expenses-overview"></div>
+            </div>
+        </div>
+
+        <div id="item-lists" class="wrapper-flex">
+            <div>
+                <h3>Income</h3>
+                <ul class="income-list">
+                    <li class="default-value">None</li>
+                </ul> 
+            </div>
+            
+            <div>
+                <h3>Expenses</h3>
+                <ul class="expense-list">
+                    <li class="default-value">None</li>
+                </ul> 
+            </div>
+        </div>
+    </section>
+
+    <div id="upcoming-payments">
+        <h3>Upcoming payments</h3>
+        <ul class="upcoming-list">
+            <li class="default-value">None</li>
+            <li>
+                <div id="upcoming-container"></div>
+            </li>
+        </ul>
+    </div>
+
+    <script src="js/Card.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

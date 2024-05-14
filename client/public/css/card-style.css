@@ -1,0 +1,57 @@
+:root {
+    --large-horizontal-spacing: 12rem;
+    --large-vertical-spacing: 6rem;
+    --med-spacing: 2rem;
+    --small-spacing: 1rem;
+
+    --clr-ice: #99D3DF;
+    --clr-fresh-water: #88BBD6;
+    --clr-leaf: #66AB8C;
+    --clr-salmon: #FA7C92;
+    --clr-plaster: #CDCDCD;
+    --clr-linen: #E9E9E9;
+    --clr-overcast: #9099A2;
+    --clr-overcast-highlight: #5D656E;
+    --clr-base-text: #2F2F2F;
+    --clr-subtle-white: #F5F5F5;
+
+    --base-font-size: 1rem;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--small-spacing) var(--med-spacing);
+    min-height: 100px;
+    border-radius: 0.5rem;
+    filter: drop-shadow(grey 0px 3px 2px);
+}
+
+.title {
+    color: white;
+}
+
+.amount {
+    text-align: center;
+    color: white;
+    font-size: 2.5rem;
+    margin-bottom: var(--small-spacing);
+}
+
+.income-div {
+    background-color: var(--clr-leaf);
+}
+
+.expenses-div {
+    background-color: var(--clr-salmon);
+}
+
+.balance-div {
+    background-color: var(--clr-overcast);
+}

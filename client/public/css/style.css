@@ -1,0 +1,473 @@
+:root {
+    --large-horizontal-spacing: 12rem;
+    --large-vertical-spacing: 6rem;
+    --med-spacing: 2rem;
+    --small-spacing: 1rem;
+
+    --clr-ice: #99D3DF;
+    --clr-fresh-water: #88BBD6;
+    --clr-leaf: #66AB8C;
+    --clr-salmon: #FA7C92;
+    --clr-plaster: #CDCDCD;
+    --clr-linen: #E9E9E9;
+    --clr-overcast: #9099A2;
+    --clr-overcast-highlight: #5D656E;
+    --clr-base-text: #2F2F2F;
+    --clr-subtle-white: #F5F5F5;
+
+    --base-font-size: 1.5rem;
+}
+
+/* General */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+body {
+    background-image: url(../images/stacked-waves-haikei.svg);
+    background-size: cover;
+    font-size: var(--base-font-size);
+    width: 100vw;
+}
+
+#schedule-body {
+    background-image: none;
+    background-color: var(--clr-subtle-white);
+}
+
+#investing-body {
+    background-image: none;
+    background-color: var(--clr-subtle-white);
+}
+
+#help-body {
+    background-image: none;
+    background-color: var(--clr-subtle-white);
+}
+
+h1, h3, h4, p, span, li , label {
+    color: var(--clr-base-text);
+}
+
+li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: var(--clr-base-text);
+}
+
+/* Images */
+
+img.logo {
+    width: 200px;
+    height: auto;
+}
+
+/* Nav */
+nav ul {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Dashboard page ----------------------------------------------------------- */
+
+/* Frequency selector */
+.dropdown {
+    position: relative;
+    padding: 0 !important;
+}
+
+.dropdown > * {
+    width: 180px;
+}
+
+.selected {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--small-spacing);
+    margin-left: auto;
+    padding: 0.5rem var(--small-spacing);
+    background-color: var(--clr-subtle-white);
+    border-radius: 0.5rem;
+}
+
+.selected:hover {
+    cursor: pointer;
+}
+
+.selected.active {
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.selected img.active {
+    rotate: 180deg;
+}
+
+.options {
+    position: absolute;
+    right: 0;
+    z-index: 1;
+}
+
+.option {
+    background-color: var(--clr-subtle-white);
+    padding: 0.5rem var(--small-spacing);
+    cursor: pointer;
+}
+
+.option:hover {
+    background-color: var(--clr-linen);
+}
+
+.option:not(:last-child) {
+    border-bottom: 1px solid var(--clr-overcast);
+}
+
+.option:last-child {
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+/* Dashboard */
+
+#dashboard {
+    background-color: rgba(245, 245, 245, 0.4);
+    padding-block: var(--med-spacing);
+    border-radius: 1rem;
+    box-shadow: grey 0px 5px 4px;
+}
+
+#dashboard > *:not(:last-child) {
+    margin-bottom: var(--large-vertical-spacing);
+}
+
+h3 {
+    font-size: var(--base-font-size);
+    font-weight: 600;
+    margin-bottom: var(--small-spacing);
+}
+
+/* Cards */
+
+
+.cards > * {
+    min-width: 30%;
+    max-width: 30%;
+}
+
+.card {
+    padding: var(--small-spacing) var(--med-spacing);
+    border-radius: 0.5rem;
+    filter: drop-shadow(0 4px 3px grey);
+}
+
+.card-title {
+    color: white;
+}
+
+.card-amount {
+    color: white;
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: var(--small-spacing);
+}
+
+#income-card {background-color: var(--clr-leaf);}
+
+#expenses-card {background-color: var(--clr-salmon);}
+
+#balance-card {background-color: var(--clr-overcast);}
+
+/* Forms */
+
+form {
+    background-color: var(--clr-subtle-white);
+    padding: var(--small-spacing);
+    border-radius: 0 0.5rem 0.5rem 0.5rem;
+    min-width: fit-content;
+}
+
+form > *:not(:last-child) {
+    margin-bottom: var(--small-spacing);
+}
+
+form > * {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+label, h4 {
+    font-size: 1.25rem;
+}
+
+h4 {
+    font-weight: 500;
+}
+
+input[type="text"], input[type="date"] {
+    font-size: var(--base-font-size);
+    padding: 0.25rem 0.5rem;
+    border: solid var(--clr-linen) 2px;
+    border-radius: 0.25rem;
+}
+
+/* Frequency container */
+form > div:nth-child(4) > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--small-spacing)
+}
+
+/* Submit container */
+form > div:last-child {
+    margin-top: var(--small-spacing);
+    gap: var(--med-spacing);
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.form-msg {
+    font-size: 1.25rem;
+    color: var(--clr-salmon);
+}
+
+/* Buttons */
+
+button {
+    display: flex;
+    background-color: var(--clr-overcast);
+    background-repeat: no-repeat;
+    background-position: center;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    width: 80px;
+    height: 40px;
+}
+
+.add {
+    margin-top: 0.5rem;
+    background-image: url(../images/plus.png);
+    border-radius: 0.5rem;
+}
+
+.add.active {
+    background-image: url(../images/cross-small.png);
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.submit {
+    background-image: url(../images/check.png);
+    border-radius: 0.5rem;
+}
+
+.fn-btn:hover {
+    background-color: var(--clr-overcast-highlight);
+}
+
+button.freq-btn {
+    background-color: white;
+    justify-content: center;
+    font-size: 1.25rem;
+    padding: 0.5rem var(--small-spacing);
+    min-width: 150px;
+    width: auto;
+    height: auto;
+    cursor: pointer;
+    border: solid var(--clr-linen) 2px;
+    border-radius: 0.25rem;
+}
+
+.freq-btn.active {
+    background-color: var(--clr-ice);
+    color: white;
+}
+
+.remove-btn {
+    background-color: var(--clr-overcast);
+    background-image: url(../images/cross-small-remove-highlight.png);
+    background-size: contain;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.remove-btn:hover {
+    background-color: var(--clr-salmon);
+    background-image: url(../images/cross-small-remove-highlight.png);
+}
+
+/* Overview */
+
+#visual-bar {
+    display: flex;
+    height: 50px;
+    background-color: var(--clr-subtle-white);
+    border-radius: 0.5rem;
+}
+
+.income-overview {
+    border-radius: 0.5rem 0 0 0.5rem;
+    background-color: var(--clr-leaf);
+}
+
+.expenses-overview {
+    border-radius: 0 0.5rem 0.5rem 0;
+    background-color: var(--clr-salmon);
+}
+
+/* Items */
+
+#item-lists {
+    gap: var(--med-spacing);
+}
+
+#item-lists > * {
+    flex-grow: 1;
+}
+
+.list-item {
+    background-color: var(--clr-subtle-white);
+    padding: 0.5rem var(--small-spacing);
+    margin-bottom: var(--small-spacing);
+    border-radius: 0.5rem;
+}
+
+.amount-btn-container {
+    width: 55%;
+}
+
+.default-value {
+    font-size: 1.25rem;
+}
+
+/* Upcoming payments */
+
+#upcoming-payments {
+    width: 90%;
+    margin-inline: auto;
+    margin-bottom: var(--large-vertical-spacing);
+}
+
+.upcoming-list li:not(:last-child){
+    margin-bottom: var(--small-spacing);
+}
+
+/* Investing ---------------------------------------------------------------- */
+
+#investment-strategies h1 {
+    font-size: 4rem;
+}
+
+#investment-strategies > div {
+    border-radius: 1rem;
+    padding-block: var(--small-spacing);
+}
+
+#investment-strategies > div:nth-child(1), 
+#investment-strategies > div:nth-child(3) {
+    border: solid var(--clr-overcast) 1px;
+}
+
+h1, article > * {
+    margin-bottom: var(--med-spacing);
+}
+
+.article-image {
+    border-radius: 0.5rem;
+    width: 50%;
+    height: auto;
+    object-fit: cover;
+    object-position: center;
+}
+
+.description {
+    display: flex;
+    gap: var(--small-spacing);
+}
+
+.pros-cons {
+    display: flex;
+    justify-content: center;
+}
+
+.pros-cons > * {
+    margin-inline: auto;
+}
+
+article li {
+    list-style: disc;
+}
+
+/* Help page ---------------------------------------------------------------- */
+
+aside {
+    float: left;
+    height: 150vh;
+    margin-inline: var(--med-spacing);
+}
+
+.help-section h1 {
+    margin-block: var(--med-spacing);
+}
+
+.help-section h3 {
+    margin: 0;
+}
+
+.help-section li {
+    list-style: disc;
+}
+
+.help-section article:not(:last-child) {
+    margin-bottom: var(--small-spacing);
+}
+
+/* Reusable classes --------------------------------------------------------- */
+
+.wrapper {
+    max-width: 90%;
+    margin-inline: auto;
+    margin-block: var(--med-spacing);
+    padding-inline: var(--med-spacing);
+}
+
+.wrapper-flex {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.hide {
+    display: none;
+}
+
+/* Media queries */
+
+@media (max-width: 700px) {
+    nav ul {
+        flex-direction: column;
+    }
+
+    .article-image {
+        width: 100%;
+    }
+
+    .description {
+        display: block !important;
+    }
+}

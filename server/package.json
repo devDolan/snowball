@@ -1,0 +1,18 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "A server for Snowball project - a budget tracking and basic scheduling application.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sean Dolan",
+  "license": "ISC",
+  "dependencies": {
+    "express": "*",
+    "pg": "*",
+    "path": "*",
+    "cors": "*",
+    "body-parser": "*"
+  }
+}
