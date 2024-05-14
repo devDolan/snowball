@@ -1,4 +1,4 @@
-const url = 'http://localhost:3000/'
+const url = 'http://3.25.57.89:3000/'
 
 const incomeBtn = document.getElementById('income-btn')
 const incomeForm = document.getElementById('income')
