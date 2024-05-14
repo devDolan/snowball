@@ -1,5 +1,4 @@
 const express = require('express')
-const bodyParser = require('body-parser')
 const cors = require('cors')
 const paymentsRouter = require('./routes/payments')
 const incomeRouter = require('./routes/income')
