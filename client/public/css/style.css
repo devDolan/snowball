@@ -8,6 +8,7 @@
     --clr-fresh-water: #88BBD6;
     --clr-leaf: #66AB8C;
     --clr-salmon: #FA7C92;
+    --clr-gold: #FFC700;
     --clr-plaster: #CDCDCD;
     --clr-linen: #E9E9E9;
     --clr-overcast: #9099A2;
@@ -35,7 +36,7 @@ body {
 }
 
 #schedule-body {
-    background-image: none;
+    background-image: url(../images/circle-scatter-haikei.svg);
     background-color: var(--clr-subtle-white);
 }
 
@@ -365,6 +366,84 @@ button.freq-btn {
 
 .upcoming-list li:not(:last-child){
     margin-bottom: var(--small-spacing);
+}
+
+/* Schedule ----------------------------------------------------------------- */
+
+#calendar {
+    background-color: rgba(245, 245, 245, 0.8);
+    padding-block: var(--med-spacing);
+    border-radius: 1rem;
+    box-shadow: grey 0px 5px 4px;
+}
+
+#months button {
+    width: auto;
+    height: auto;
+    padding: 0;
+    background: none;
+    margin-inline: var(--med-spacing);
+}
+
+#month-year {
+    width: 20%;
+    text-align: center;
+    font-size: 3rem;
+}
+
+#months {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--med-spacing);
+    padding-bottom: var(--small-spacing);
+}
+
+#calendar table {
+    width: 100%;
+}
+
+th, td {
+    width: 14.28%;
+}
+
+th {
+    padding-bottom: var(--med-spacing);
+}
+
+td {
+    text-align: center;
+    padding: 3rem;
+}
+
+.circle-container {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--small-spacing);
+    gap: 0.5rem;
+}
+
+.date-highlight-dark {
+    color: white;
+    background-color: var(--clr-overcast-highlight);
+    border-radius: 50%;
+    padding: 0.5rem;
+    width: fit-content;
+    margin-inline: auto;
+}
+
+.circle-payment, .circle-task {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+}
+
+.circle-payment {
+    background-color: var(--clr-salmon);
+}
+
+.circle-task {
+    background-color: var(--clr-gold);
 }
 
 /* Investing ---------------------------------------------------------------- */

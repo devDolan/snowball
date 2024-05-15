@@ -44,6 +44,24 @@ router.get('/tasks/:id', async (req, res) => {
     }
 })
 
+// Get tasks by date
+router.get('/tasks/:date', async (req, res) => {
+    try {
+        const {date} = req.params
+        const expense = await pool.query(
+            `SELECT * FROM tasks
+             WHERE date = $1
+            `,
+            [date]
+        )
+
+        res.status(200).json(expense.rows)
+    } catch (err) {
+        console.log(err.message)
+        res.status(500).json({error: 'Internal server error'})
+    }
+})
+
 // Update a task item's description field
 router.put('/tasks/:id', async (req, res) => {
     try {

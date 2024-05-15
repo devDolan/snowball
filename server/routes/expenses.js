@@ -73,6 +73,24 @@ router.get('/expenses/:id', async (req, res) => {
     }
 })
 
+// Get expenses by date
+router.get('/expenses/:date', async (req, res) => {
+    try {
+        const {date} = req.params
+        const expense = await pool.query(
+            `SELECT * FROM payments
+             WHERE date = $1
+            `,
+            [date]
+        )
+
+        res.status(200).json(expense.rows)
+    } catch (err) {
+        console.log(err.message)
+        res.status(500).json({error: 'Internal server error'})
+    }
+})
+
 // Update an expense item's amount field
 router.put('/expenses/:id', async (req, res) => {
     try {
