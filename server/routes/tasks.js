@@ -10,12 +10,13 @@ router.post('/tasks', async (req, res) => {
         const {description, date} = req.body
         const task = await pool.query(
             `INSERT INTO tasks (description, date)
-             VALUES ($1, $2)`,
+             VALUES ($1, $2) RETURNING *`,
             [description, date])
 
-        res.status(200).send('New task added')
+        res.status(201).json(task.rows[0])
     } catch (err) {
         console.log(err.message)
+        res.status(500).json({error: 'Internal server error'})
     }
 })
 
@@ -23,7 +24,7 @@ router.post('/tasks', async (req, res) => {
 router.get('/tasks', async (req, res) => {
     try {
         const tasks = await pool.query('SELECT * FROM tasks')
-        res.json(tasks.rows).send()
+        res.status(200).json(tasks.rows)
     } catch (err) {
         console.log(err.message)
     }
@@ -34,7 +35,7 @@ router.get('/tasks/:id', async (req, res) => {
     try {
         const {id} = req.params
         const task = await pool.query(
-            `SELECT * FROM tasks WHERE id = $1`,
+            `SELECT * FROM tasks WHERE task_id = $1`,
             [id]
         )
 
@@ -45,7 +46,7 @@ router.get('/tasks/:id', async (req, res) => {
 })
 
 // Get tasks by date
-router.get('/tasks/:date', async (req, res) => {
+router.get('/tasks/date/:date', async (req, res) => {
     try {
         const {date} = req.params
         const expense = await pool.query(
@@ -70,7 +71,7 @@ router.put('/tasks/:id', async (req, res) => {
         
         const updateTask = await pool.query(
             `UPDATE tasks SET description = $2
-             WHERE id = $1`,
+             WHERE task_id = $1`,
             [id, description]
         )
 
@@ -84,13 +85,16 @@ router.put('/tasks/:id', async (req, res) => {
 router.delete('/tasks/:id', async (req, res) => {
     try {
         const {id} = req.params
-        task = await pool.query(
-            'DELETE FROM tasks WHERE id = $1', [id]
+        const task = await pool.query(
+            `DELETE FROM tasks WHERE task_id = $1
+             RETURNING *`
+            , [id]
         )
 
-        res.status(204).send()
+        res.status(204).json(task.rows[0])
     } catch (err) {
         console.log(err.message)
+        res.status(500).json({error: 'Internal server error'})
     }
 })
 

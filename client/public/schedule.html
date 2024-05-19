@@ -22,17 +22,47 @@
     </nav>
 
     <div id="calendar" class="wrapper">
-        <div id="months">
-            <button id="date-left">
-                <img src="./images/angle-small-left.png" alt="left-arrow">
-            </button>
-            <span id="month-year"></span>
-            <button id="date-right">
-                <img src="./images/angle-small-right.png" alt="right-arrow">
-            </button>
+        <div id="sidebar" class="hide">
+            <div id="title-close-container">
+                <h2 id="date-title"></h2>
+                <button id="sidebar-close">
+                    <img src="./images/cross-dark.png" alt="close">
+                </button>
+            </div>
+            
+            <h3>Payments</h3>
+            <ul id="payment-list">
+                <li class="default-value">None</li>
+            </ul>
+            <h3>Tasks</h3>
+            <ul id="task-list">
+                <li class="default-value">None</li>
+            </ul>
+            <form id="task-form">
+                <div>
+                    <label for="description">New task</label>
+                    <input type="text" name="description" id="description">
+                </div>
+                <div>
+                    <span class="form-msg hide">
+                        Please enter a task
+                    </span>
+                    <button class="fn-btn submit" type="submit"></button>
+                </div>
+            </form>
         </div>
-
-        <table></table>
+        <div id="calendar-content">
+            <div id="months">
+                <button id="date-left">
+                    <img src="./images/angle-small-left.png" alt="left-arrow">
+                </button>
+                <span id="month-year"></span>
+                <button id="date-right">
+                    <img src="./images/angle-small-right.png" alt="right-arrow">
+                </button>
+            </div>
+    
+            <table></table>
         </div>
     </div>
 

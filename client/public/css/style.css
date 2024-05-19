@@ -50,7 +50,7 @@ body {
     background-color: var(--clr-subtle-white);
 }
 
-h1, h3, h4, p, span, li , label {
+h1, h2, h3, h4, p, span, li , label {
     color: var(--clr-base-text);
 }
 
@@ -371,10 +371,63 @@ button.freq-btn {
 /* Schedule ----------------------------------------------------------------- */
 
 #calendar {
+    display: flex;
+    justify-content: space-between;
     background-color: rgba(245, 245, 245, 0.8);
     padding-block: var(--med-spacing);
     border-radius: 1rem;
     box-shadow: grey 0px 5px 4px;
+}
+
+#sidebar {
+    border: solid var(--clr-overcast) 1px;
+    border-radius: 0.5rem;
+    padding: var(--med-spacing);
+}
+
+.show {
+    display: flex;
+    flex-direction: column;
+}
+
+#title-close-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--large-vertical-spacing);
+}
+
+#sidebar-close {
+    width: fit-content;
+    height: fit-content;
+    background-color: transparent;
+}
+
+#payment-list {
+    margin-bottom: var(--large-vertical-spacing);
+}
+
+#task-list {
+    margin-bottom: auto;
+}
+
+#task-list li:not(:first-of-type) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: solid var(--clr-overcast);
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0.25rem 0.5rem;
+}
+
+#task-form {
+    padding: 0 !important;
+    background-color: transparent;
+}
+
+#calendar-content {
+    flex-grow: 1;
 }
 
 #months button {
@@ -386,7 +439,7 @@ button.freq-btn {
 }
 
 #month-year {
-    width: 20%;
+    width: 50%;
     text-align: center;
     font-size: 3rem;
 }
@@ -413,12 +466,21 @@ th {
 
 td {
     text-align: center;
-    padding: 3rem;
+    padding: 2.5rem;
+}
+
+td p {
+    padding: 0.5rem;
+    border-radius: 50%;
+    margin-inline: auto;
+    width: 2em;
+    cursor: pointer;
 }
 
 .circle-container {
     display: flex;
     justify-content: center;
+    height: 1rem;
     margin-top: var(--small-spacing);
     gap: 0.5rem;
 }
@@ -426,10 +488,6 @@ td {
 .date-highlight-dark {
     color: white;
     background-color: var(--clr-overcast-highlight);
-    border-radius: 50%;
-    padding: 0.5rem;
-    width: fit-content;
-    margin-inline: auto;
 }
 
 .circle-payment, .circle-task {
@@ -457,8 +515,8 @@ td {
     padding-block: var(--small-spacing);
 }
 
-#investment-strategies > div:nth-child(1), 
-#investment-strategies > div:nth-child(3) {
+#investment-strategies > div:nth-child(2), 
+#investment-strategies > div:nth-child(4) {
     border: solid var(--clr-overcast) 1px;
 }
 
@@ -494,12 +552,6 @@ article li {
 
 /* Help page ---------------------------------------------------------------- */
 
-aside {
-    float: left;
-    height: 150vh;
-    margin-inline: var(--med-spacing);
-}
-
 .help-section h1 {
     margin-block: var(--med-spacing);
 }
@@ -510,10 +562,24 @@ aside {
 
 .help-section li {
     list-style: disc;
+    margin-bottom: var(--med-spacing);
 }
 
 .help-section article:not(:last-child) {
     margin-bottom: var(--small-spacing);
+}
+
+.help-image {
+    border: solid var(--clr-overcast);
+    border-radius: 0.5rem;
+    width: 40%;
+    height: auto;
+    margin-top: var(--small-spacing);
+    padding: var(--small-spacing);
+}
+
+.help-image:first-child {
+    margin-right: var(--small-spacing);
 }
 
 /* Reusable classes --------------------------------------------------------- */

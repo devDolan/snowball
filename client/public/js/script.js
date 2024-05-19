@@ -1,4 +1,5 @@
-const url = 'http://3.25.57.89:3000/'
+//const url = 'http://3.25.57.89:3000/'
+const url = 'http://localhost:3000/'
 
 if (document.getElementById('index-body')) {
     console.log('this is the dashboard page')
@@ -60,7 +61,7 @@ if (document.getElementById('index-body')) {
     const forms = document.querySelectorAll('form')
     forms.forEach(form => {
         form.addEventListener('submit', event => {
-            formHandler(event, form)
+            paymentFormHandler(event, form)
         })
     })
 
@@ -97,7 +98,7 @@ if (document.getElementById('index-body')) {
 
     updateOverview()
 
-    // Functions below ---------------------------------------------------------
+    // Functions below --------------------------------------------------------
 
     async function getIncomeTotal() {
         try {
@@ -199,7 +200,7 @@ if (document.getElementById('index-body')) {
         form.querySelector('.form-msg').classList.add('hide')
     }
 
-    function formHandler(event, form) {
+    function paymentFormHandler(event, form) {
         event.preventDefault()
 
         let valid = true
@@ -220,7 +221,7 @@ if (document.getElementById('index-body')) {
 
         formMsg.classList.add('hide')
 
-        send(form)
+        sendPaymentItem(form)
         form.classList.toggle('hide')
         const btn = form.previousElementSibling
         btn.classList.toggle('active')
@@ -233,7 +234,7 @@ if (document.getElementById('index-body')) {
         options.classList.toggle('hide')
     }
 
-    async function send(form) {
+    async function sendPaymentItem(form) {
         const formData = new FormData(form)
         const type = form.id
 
@@ -372,26 +373,6 @@ if (document.getElementById('index-body')) {
         }
     }
 
-    async function getAll(type) {
-        try {
-            const response = await fetch((url + type), {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-            
-            if (!response.ok) {
-                throw new error('Request error')
-            }
-
-            const jsonData = await response.json()
-            return jsonData
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
     async function getUpcomingPayments() {
         try {
             const response = await fetch((`${url}payments/upcoming`), {
@@ -460,7 +441,10 @@ if (document.getElementById('index-body')) {
 
         try {
             const response = await fetch(newUrl, {
-                method: "DELETE"
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                }
             })
 
             if (!response.ok) {
@@ -510,10 +494,10 @@ if (document.getElementById('index-body')) {
     }
 }
 
-// Schedule --------------------------------------------------------------------
+// Schedule -------------------------------------------------------------------
 
 if (document.getElementById('schedule-body')) {
-    const calendar = document.getElementById('calendar')
+    const calendar = document.getElementById('calendar-content')
     const monthYear = document.getElementById('month-year')
     const dateLeft = document.getElementById('date-left')
     const dateRight = document.getElementById('date-right')
@@ -525,23 +509,69 @@ if (document.getElementById('schedule-body')) {
         date.setMonth(date.getMonth() - 1)
         monthYear.textContent = getMonthYear(date)
         generateCalendar(date)
+        generatePaymentIndicators(date)
+        generateTaskIndicators(date)
+        updateDateClickEvents()
     })
 
     dateRight.addEventListener('click', () => {
         date.setMonth(date.getMonth() + 1)
         monthYear.textContent = getMonthYear(date)
         generateCalendar(date)
+        generatePaymentIndicators(date)
+        generateTaskIndicators(date)
+        updateDateClickEvents()
     })
 
     generateCalendar(date)
+    generatePaymentIndicators(date)
+    generateTaskIndicators(date)
 
-    // Functions ---------------------------------------------------------------
+    const sideBar = document.getElementById('sidebar')
+    const dateTitle = document.getElementById('date-title')
+    const closeBtn = document.getElementById('sidebar-close')
+    const paymentList = document.getElementById('payment-list')
+    const paymentNone = document.querySelector('#payment-list .default-value')
+    const taskList = document.getElementById('task-list')
+    const taskNone = document.querySelector('#task-list .default-value')
+    const taskForm = document.getElementById('task-form')
+
+    updateDateClickEvents()
+
+    closeBtn.addEventListener('click', () => {
+        sideBar.classList.add('hide')
+        sideBar.classList.remove('show')
+    })
+
+    taskForm.addEventListener('submit', event => {
+        taskFormHandler(event, taskForm, dateTitle.textContent)
+    })
+
+    // Functions --------------------------------------------------------------
 
     function getMonthYear(date) {
         const month = date.toLocaleDateString('en-au', {month: 'long'})
         const year = date.getFullYear()
     
         return `${month}, ${year}`
+    }
+
+    function updateDateClickEvents() {
+        const dates = document.querySelectorAll('p')
+        dates.forEach(day => {
+            if (day.textContent !== '') {
+                day.addEventListener('click', () => {
+                    if (sideBar.classList.contains('hide')) {
+                        sideBar.classList.add('show')
+                        sideBar.classList.remove('hide')
+                    }
+
+                    dateTitle.textContent = `${day.textContent} ${monthYear.textContent}`
+                    displayPayments(date, day.textContent)
+                    displayTasks(date, day.textContent)
+                })
+            }
+        })
     }
 
     function generateCalendar(date) {
@@ -584,26 +614,15 @@ if (document.getElementById('schedule-body')) {
                 }
 
                 const container = document.createElement('div')
+                container.setAttribute('id', `day-${dayCount}`)
                 container.classList.add('circle-container')
-
-                const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${dayCount}`
-                if (hasExpenses(formattedDate)) {
-                    const paymentCircle = document.createElement('div')
-                    paymentCircle.classList.add('circle-payment')
-
-                    const taskCircle = document.createElement('div')
-                    taskCircle.classList.add('circle-task')
-
-                    container.appendChild(paymentCircle)
-                    container.appendChild(taskCircle)
-                }
 
                 data.appendChild(day)
                 data.appendChild(container)
                 row.appendChild(data)
 
                 if (start) dayCount++
-                if (dayCount > lastDay.getDate()) start = false 
+                if (dayCount > lastDay.getDate()) start = false
             }
 
             newTable.appendChild(row)
@@ -612,21 +631,117 @@ if (document.getElementById('schedule-body')) {
         calendar.replaceChild(newTable, currentTable)
     }
 
-    function hasExpenses(date) {
-        getExpensesByDate(date).then(res => {
-            if (res) {
-                console.log(res)
-                return true
+    function displayPayments(date, selectedDay) {
+        const month = (date.getMonth() + 1).toString().padStart(2, '0')
+        const day = selectedDay.padStart(2, '0')
+        const searchDate = `${date.getFullYear()}-${month}-${day}`
+
+        getItemByDate(searchDate, 'expenses').then(res => {
+            while (paymentList.children.length > 1) {
+                paymentList.removeChild(paymentList.children[1])
             }
 
-            return false
+            res.forEach(expense => {
+                const {name, amount, date} = expense
+                const listElement = document.createElement('li')
+                listElement.textContent = `${name} - $${amount}`
+
+                paymentList.appendChild(listElement)
+            })
+
+            updatePaymentNone()
+        }).catch(error => {
+            console.log(error)
         })
     }
 
-    async function getExpensesByDate(date) {
+    function updatePaymentNone() {
+        if (paymentList.children.length > 1) {
+            paymentNone.classList.add('hide')
+        } else {
+            paymentNone.classList.remove('hide')
+        }
+    }
+
+    function generatePaymentIndicators(currentDate) {
+        getAll('expenses').then(res => {
+            const dates = new Set()
+            res.forEach(expense => {
+                const {date, frequency} = expense
+                let first = new Date(date)
+                const weekday = first.getDay()
+
+                if (currentDate.getMonth() > first.getMonth()) {
+                    let offset = new Date(first)
+                    while (offset.getMonth() !== currentDate.getMonth()) {
+                        offset = nextDate(offset, frequency)
+                    }
+
+                    while (offset.getDay() !== weekday) {
+                        offset.setDate(offset.getDate() - 1)
+                    }
+
+                    first = offset
+                }
+
+                if (currentDate.getMonth() >= first.getMonth()) {
+                    dates.add(first.getDate())
+
+                    let next = nextDate(first, frequency)
+                    while (next.getMonth() === currentDate.getMonth()) {
+                        dates.add(next.getDate())
+                        next = nextDate(next, frequency)
+                    }
+                }
+            })
+
+            dates.forEach(day => {
+                const container = document.getElementById(`day-${day}`)
+                const indicator = document.createElement('div')
+                indicator.classList.add('circle-payment')
+                container.appendChild(indicator)
+            })
+        }).catch(error => {
+            console.log(error)
+        })
+    }
+
+    function generateTaskIndicators(currentDate) {
+        getAll('tasks').then(res => {
+            const dates = new Set()
+            res.forEach(task => {
+                const {date} = task
+                const newDate = new Date(date)
+
+                if (newDate.getMonth() === currentDate.getMonth())
+                    dates.add(newDate.getDate())
+            })
+
+            dates.forEach(day => {
+                addTaskIndicator(day)
+            })
+        }).catch(error => {
+            console.log(error)
+        })
+    }
+
+    function nextDate(date, frequency) {
+        const newDate = new Date(date)
+
+        if (frequency === 'weekly') {
+            newDate.setDate(newDate.getDate() + 7)
+        } else if (frequency ==='fortnightly') {
+            newDate.setDate(newDate.getDate() + 14)
+        } else if (frequency === 'monthly') {
+            newDate.setDate(newDate.getMonth() + 1)
+        }
+        
+        return newDate
+    }
+
+    async function getItemByDate(date, type) {
         try {
-            console.log(`${url}?date=${date}`)
-            const response = await fetch((`${url}?date=${date}`), {
+            const response = await fetch((`${url}${type}/date/${date}`), {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -642,5 +757,176 @@ if (document.getElementById('schedule-body')) {
         } catch (error) {
             console.log(error)
         }
+    }
+
+    function taskFormHandler(event, form, selectedDay) {
+        event.preventDefault()
+
+        let valid = true
+        const formMsg = form.querySelector('.form-msg')
+
+        const input = form.querySelector('input')
+        if (input.value === '') {
+            valid = false
+        }
+
+        if (!valid) {
+            formMsg.classList.remove('hide')
+            return
+        }
+
+        formMsg.classList.add('hide')
+
+        sendTaskItem(form, selectedDay)
+        form.reset()
+    }
+
+    async function sendTaskItem(form, selectedDay) {
+        const formData = new FormData(form)
+        const type = 'tasks'
+
+        const jsonData = {};
+        jsonData['description'] = formData.get('description')
+        
+        const month = (date.getMonth() + 1).toString().padStart(2, '0')
+        const day = selectedDay.split(' ')[0].padStart(2, '0')
+        jsonData['date'] = `${date.getFullYear()}-${month}-${day}`
+
+        try {
+            const response = await fetch((url + type), {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(jsonData)
+            })
+
+            if (response.status === 201) {
+                response.json().then(res => {
+                    addTask(res)
+                }).catch(error => {
+                    console.log(error)
+                })
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    function displayTasks(date, selectedDay) {
+        const month = (date.getMonth() + 1).toString().padStart(2, '0')
+        const day = selectedDay.padStart(2, '0')
+        const searchDate = `${date.getFullYear()}-${month}-${day}`
+
+        getItemByDate(searchDate, 'tasks').then(res => {
+            while (taskList.children.length > 1) {
+                taskList.removeChild(taskList.children[1])
+            }
+
+            res.forEach(task => {
+                addTask(task)
+            })
+
+            updateTaskNone()
+        }).catch(error => {
+            console.log(error)
+        })
+    }
+
+    function addTask(task) {
+        const {task_id, description} = task
+        const listElement = document.createElement('li')
+        listElement.setAttribute('id', `task_${task_id}`)
+        const spanElement = document.createElement('span')
+        spanElement.textContent = `${description}`
+
+        const deleteBtn = document.createElement('button')
+        deleteBtn.classList.add('remove-btn')
+        deleteBtn.addEventListener('click', () => {
+            removeTask(task_id)
+        })
+        
+        listElement.appendChild(spanElement)
+        listElement.appendChild(deleteBtn)
+        taskList.appendChild(listElement)
+
+        updateTaskNone()
+        updateTaskIndicator()
+    }
+
+    function updateTaskNone() {
+        if (taskList.children.length > 1) {
+            taskNone.classList.add('hide')
+        } else {
+            taskNone.classList.remove('hide')
+        }
+    }
+
+    function updateTaskIndicator() {
+        const day = dateTitle.textContent.split(' ')[0]
+
+        if (taskList.children.length > 1) {
+            addTaskIndicator(day)
+        } else {
+            removeTaskIndicator(day)
+        }        
+    }
+
+    function removeTaskIndicator(day) {
+        const indicator = document.querySelector(`#day-${day} .circle-task`)
+        indicator.remove()
+    }
+
+    function addTaskIndicator(day) {
+        const container = document.getElementById(`day-${day}`)
+        const indicator = document.createElement('div')
+        indicator.classList.add('circle-task')
+
+        if (container.querySelector('.circle-task') === null) {
+            container.appendChild(indicator)
+        }
+    }
+    
+    async function removeTask(id) {
+        try {
+            const response = await fetch(`${url}tasks/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+
+            if (!response.ok) {
+                throw new error('Request error')
+            }
+
+            document.getElementById(`task_${id}`).remove()
+            updateTaskNone()
+            updateTaskIndicator()
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
+
+// ----------------------------------------------------------------------------
+
+async function getAll(type) {
+    try {
+        const response = await fetch((url + type), {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        
+        if (!response.ok) {
+            throw new error('Request error')
+        }
+
+        const jsonData = await response.json()
+        return jsonData
+    } catch (error) {
+        console.log(error)
     }
 }

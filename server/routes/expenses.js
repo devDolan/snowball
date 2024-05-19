@@ -25,7 +25,7 @@ router.get('/expenses', async (req, res) => {
     try {
         const expenses = await pool.query(
             `SELECT * FROM payments
-             WHERE type = $1
+            WHERE type = $1
             `,
             ['expense']
         )
@@ -74,14 +74,34 @@ router.get('/expenses/:id', async (req, res) => {
 })
 
 // Get expenses by date
-router.get('/expenses/:date', async (req, res) => {
+router.get('/expenses/date/:date', async (req, res) => {
     try {
         const {date} = req.params
         const expense = await pool.query(
             `SELECT * FROM payments
-             WHERE date = $1
+             WHERE type = $1 AND date = $2
             `,
-            [date]
+            ['expense', date]
+        )
+
+        res.status(200).json(expense.rows)
+    } catch (err) {
+        console.log(err.message)
+        res.status(500).json({error: 'Internal server error'})
+    }
+})
+
+// Get expenses by month and year
+router.get('/expenses/month/:month/year/:year', async (req, res) => {
+    try {
+        const {month, year} = req.params
+        const expense = await pool.query(
+            `SELECT * FROM payments
+             WHERE EXTRACT(MONTH FROM date) = $1
+                AND EXTRACT(YEAR FROM date) = $2
+                AND type = $3
+            `,
+            [month, year, 'expense']
         )
 
         res.status(200).json(expense.rows)
