@@ -1,6 +1,10 @@
-// const url = 'http://3.25.57.89:3000/'
-const url = 'http://localhost:3000/'
+// Dedicated
+const url = 'http://3.25.57.89:3000/'
 
+// Local
+// const url = 'http://localhost:3000/'
+
+// Index page -----------------------------------------------------------------
 if (document.getElementById('index-body')) {
     const incomeBtn = document.getElementById('income-btn')
     const incomeForm = document.getElementById('income')
@@ -65,7 +69,7 @@ if (document.getElementById('index-body')) {
     })
 
     const incomeList = document.querySelector('.income-list')
-    const incomeListNone = document.querySelector('.income-list .default-value')
+    const incomeListNone = incomeList.querySelector('.default-value')
 
     getAll('income').then(res => {
         res.forEach(data => {
@@ -76,7 +80,7 @@ if (document.getElementById('index-body')) {
     })
 
     const expensesList = document.querySelector('.expense-list')
-    const expenseListNone = document.querySelector('.expense-list .default-value')
+    const expenseListNone = expensesList.querySelector('.default-value')
 
     getAll('expenses').then(res => {
         res.forEach(data => {
@@ -87,7 +91,7 @@ if (document.getElementById('index-body')) {
     })
 
     const upcomingPayments = document.querySelector('.upcoming-list')
-    const upcomingListNone = document.querySelector('.upcoming-list .default-value')
+    const upcomingListNone = upcomingPayments.querySelector('.default-value')
 
     updateUpcomingPayments()
     checkListCount()
@@ -97,8 +101,13 @@ if (document.getElementById('index-body')) {
 
     updateOverview()
 
-    // Functions below --------------------------------------------------------
+    // Functions --------------------------------------------------------------
 
+    /**
+     * Sends a request to the database for the total of all income items.
+     * 
+     * @returns {number} total of all income items.
+     */
     async function getIncomeTotal() {
         try {
             const response = await fetch((`${url}income`), {
@@ -127,6 +136,11 @@ if (document.getElementById('index-body')) {
         }
     }
 
+    /**
+     * Sends a request to the database for the total of all expenses items.
+     * 
+     * @returns {number} total of all expense items.
+     */
     async function getExpensesTotal() {
         try {
             const response = await fetch((`${url}expenses`), {
@@ -155,6 +169,10 @@ if (document.getElementById('index-body')) {
         }
     }
 
+    /**
+     * Utilises asynchronous functions above and handles each promise
+     * fulfilment to fill the value cards with appropriate totals.
+     */
     function updateCards() {
         let balance = 0
 
@@ -166,15 +184,23 @@ if (document.getElementById('index-body')) {
         }).then(expenses => {
             balance -= expenses
             expenses = expenses.toFixed(2)
-            expensesCard.querySelector('.card-amount').textContent = `$${expenses}`
+            const expenseAmount = expensesCard.querySelector('.card-amount')
+            expenseAmount.textContent = `$${expenses}`
 
             balance = balance.toFixed(2)
-            balanceCard.querySelector('.card-amount').textContent = `$${balance}`
+            const balanceAmount = balanceCard.querySelector('.card-amount')
+            balanceAmount.textContent = `$${balance}`
         }).catch(error => {
             console.log(error)
         })
     }
 
+    /**
+     * Makes the given button's corresponding form visible when clicked.
+     * 
+     * @param {HTMLElement} btn 
+     * @param {HTMLElement} form 
+     */
     function toggleForm(btn, form) {
         btn.classList.toggle('active')
         form.classList.toggle('hide')
@@ -184,6 +210,12 @@ if (document.getElementById('index-body')) {
         }
     }
 
+
+    /**
+     * Resets all form values including form feedback message.
+     * 
+     * @param {HTMLElement} form 
+     */
     function resetForm(form) {
         form.reset()
         freqBtns.forEach(btn => {
@@ -199,6 +231,15 @@ if (document.getElementById('index-body')) {
         form.querySelector('.form-msg').classList.add('hide')
     }
 
+    /**
+     * Handles the manual submission for the form when the corresponding
+     * submit button is clicked.
+     * 
+     * @param {SubmitEvent} event 
+     * @param {HTMLElement} form 
+     * 
+     * @returns {null} When the form values are not valid and displays message.
+     */
     function paymentFormHandler(event, form) {
         event.preventDefault()
 
@@ -227,12 +268,22 @@ if (document.getElementById('index-body')) {
         resetForm(form)
     }
 
+    /**
+     * Used for the frequency dropdown.
+     * Handles button shaping and layout.
+     */
     function toggleDropdownProperties() {
         selected.classList.toggle('active')
         dropdownIcon.classList.toggle('active')
         options.classList.toggle('hide')
     }
 
+    /**
+     * Parses income/expense form data as json and prepares request for entry.
+     * On success, updates the appropriate value cards and adds item to page.
+     * 
+     * @param {HTMLElement} form 
+     */
     async function sendPaymentItem(form) {
         const formData = new FormData(form)
         const type = form.id
@@ -261,6 +312,9 @@ if (document.getElementById('index-body')) {
         }
     }
 
+    /**
+     * Passes value and frequency to invoke conversion function.
+     */
     function updateListItemsByFrequency() {
         const amounts = document.querySelectorAll('.amount-btn-container span')
         amounts.forEach(amount => {
@@ -271,6 +325,10 @@ if (document.getElementById('index-body')) {
         })
     }
 
+    /**
+     * Replaces (if any) the current upcoming payments on the page
+     * with the new top 3 payments.
+     */
     function updateUpcomingPayments() {
         const container = document.createElement('div')
         container.id = 'upcoming-container'
@@ -290,8 +348,9 @@ if (document.getElementById('index-body')) {
                 let formatted = newDate.toLocaleDateString('en-AU', options)
                 const [weekday, day, month, year] = formatted.split(' ')
                 formatted = `${weekday}, ${day} ${month} ${year}`
-
-                listElement.textContent = `${name} - $${amount} due ${formatted}`
+                
+                const listText = `${name} - $${amount} due ${formatted}`
+                listElement.textContent = listText
                 container.appendChild(listElement)
             })
 
@@ -310,6 +369,10 @@ if (document.getElementById('index-body')) {
         })
     }
 
+    /**
+     * Calculates the ratio between income and expenses.
+     * Styles the overview bar according to their ratio.
+     */
     async function updateOverview() {
         try {
             let incomeTotal = 0
@@ -358,6 +421,10 @@ if (document.getElementById('index-body')) {
         }
     }
 
+    /**
+     * If the list has any items, hides the 'None' label.
+     * Checks for all lists on the dashboard page.
+     */
     function checkListCount() {
         if (incomeList.childElementCount > 1) {
             incomeListNone.classList.add('hide')
@@ -372,6 +439,12 @@ if (document.getElementById('index-body')) {
         }
     }
 
+    /**
+     * Sends a request to the end point which gives the top 3 upcoming expenses
+     * in the database.
+     * 
+     * @returns {Promise} jsonData - data to be handled externally upon success
+     */
     async function getUpcomingPayments() {
         try {
             const response = await fetch((`${url}payments/upcoming`), {
@@ -392,6 +465,18 @@ if (document.getElementById('index-body')) {
         }
     }
 
+    /**
+     * Constructs the necessary containers for each item to display on the page.
+     * Includes a remove button for each item.
+     * 
+     * Updates dynamic values on the page.
+     * 
+     * @see updateUpcomingPayments
+     * @see updateOverview
+     * @see checkListCount
+     * 
+     * @param {Object} data 
+     */
     function createItem(data) {
         const {payment_id, type, name, amount, frequency} = data
 
@@ -432,6 +517,15 @@ if (document.getElementById('index-body')) {
         checkListCount()
     }
 
+    /**
+     * Corresponds to the remove button given to income/expense items.
+     * Constructs and sends a delete request for the appropriate item.
+     * 
+     * Updates necessary dynamic values on the page.
+     * 
+     * @param {String} type 
+     * @param {String} id 
+     */
     async function removeItem(type, id) {
         let newUrl = `${url}${type}/${id}`
         if (type === 'expense') {
@@ -460,6 +554,15 @@ if (document.getElementById('index-body')) {
         }
     }
 
+    /**
+     * Converts a given value depending on its stored frequency.
+     * i.e $10 weekly = $20 fortnightly
+     * 
+     * @param {Number} value 
+     * @param {String} storedFreq
+     *  
+     * @returns {number} Converted value according to frequency
+     */
     function convertValueByFrequency(value, storedFreq) {
         const siteFreq = selectedText.textContent
 
@@ -501,6 +604,7 @@ if (document.getElementById('schedule-body')) {
     const dateLeft = document.getElementById('date-left')
     const dateRight = document.getElementById('date-right')
 
+    // Primary date value used for generation and indicator logic
     const pageDate = new Date()
     setMonthYear(pageDate)
 
@@ -548,25 +652,60 @@ if (document.getElementById('schedule-body')) {
 
     // Functions --------------------------------------------------------------
 
+    /**
+     * Creates a new date object with the current date.
+     * 
+     * @returns {Date} generic date object.
+     */
     function currentDate() {
         return new Date()
     }
 
+    /**
+     * Creates a new date object started at the first date to ensure no
+     * overlap for date indexing.
+     * 
+     * @param {Date} date 
+     * @returns {Date} Month index of the previous month
+     */
     function prevMonth(date) {
         newDate = new Date(date.getFullYear(), date.getMonth(), 1)
         return newDate.getMonth() - 1
     }
 
+    /**
+     * Creates a new date object started at the first date to ensure no
+     * overlap for date indexing.
+     * 
+     * @param {Date} date 
+     * @returns {Date} Month index of the next month
+     */
     function nextMonth(date) {
         newDate = new Date(date.getFullYear(), date.getMonth(), 1)
         return newDate.getMonth() + 1
     }
 
+    /**
+     * Used to update the page's calendar title.
+     * 
+     * @param {Date} date 
+     */
     function setMonthYear(date) {
         const month = date.toLocaleDateString('en-au', {month: 'long'})
         monthYear.textContent = `${month}, ${date.getFullYear()}`
     }
 
+    /**
+     * Handles click events for date numbers to display the sidebar.
+     * Changes the date title in the sidebar according to clicked date.
+     * 
+     * Displays payments and tasks for that date.
+     * 
+     * @see displayPayments
+     * @see displayTasks
+     * 
+     * @param {Date} date 
+     */
     function updateDateClickEvents(date) {
         const dates = document.querySelectorAll('p')
         dates.forEach(day => {
@@ -577,7 +716,8 @@ if (document.getElementById('schedule-body')) {
                         sideBar.classList.remove('hide')
                     }
 
-                    dateTitle.textContent = `${day.textContent} ${monthYear.textContent}`
+                    const title = `${day.textContent} ${monthYear.textContent}`
+                    dateTitle.textContent = title
                     displayPayments(date, day.textContent)
                     displayTasks(date, day.textContent)
                 })
@@ -585,6 +725,13 @@ if (document.getElementById('schedule-body')) {
         })
     }
 
+    /**
+     * Generates the structure and content of the calendar using a table.
+     * Create a column for each day of the week and cycles through five rows
+     * to fit all dates.
+     * 
+     * @param {Date} date 
+     */
     function generateCalendar(date) {
         const currentTable = document.querySelector('table')
         const currentDate = new Date()
@@ -606,11 +753,13 @@ if (document.getElementById('schedule-body')) {
         const firstWeekDay = (firstDay.getDay() + 6) % 7
 
         let dayCount = 0
-        let start = false
+        let start = false // Flag used to only count cells that will have dates
         for (let i = 0; i < 5; i++) {
             const row = document.createElement('tr')
 
             for (let j = 0; j < 7; j++) {
+
+                // Starts the count when the weekdays match
                 if (j === firstWeekDay && dayCount === 0) {
                     start = true
                     dayCount = 1
@@ -619,6 +768,8 @@ if (document.getElementById('schedule-body')) {
 
                 const day = document.createElement('p')
                 if (start) day.textContent = dayCount
+
+                // Adds a circle to the current day
                 if (dayCount === currentDate.getDate() 
                     && date.getMonth() === currentDate.getMonth() 
                     && date.getFullYear() == currentDate.getFullYear()) {
@@ -643,6 +794,14 @@ if (document.getElementById('schedule-body')) {
         calendar.replaceChild(newTable, currentTable)
     }
 
+    /**
+     * Makes a request to the database to get all expense items for that date.
+     * Creates a list item for each payment and removes any children 
+     * previously appended by other click events.
+     * 
+     * @param {Date} date 
+     * @param {String} selectedDay 
+     */
     function displayPayments(date, selectedDay) {
         const month = (date.getMonth() + 1).toString().padStart(2, '0')
         const day = selectedDay.padStart(2, '0')
@@ -667,6 +826,9 @@ if (document.getElementById('schedule-body')) {
         })
     }
 
+    /**
+     * Displays the 'None' label if there are no expenses in the list.
+     */
     function updatePaymentNone() {
         if (paymentList.children.length > 1) {
             paymentNone.classList.add('hide')
@@ -675,6 +837,14 @@ if (document.getElementById('schedule-body')) {
         }
     }
 
+    /**
+     * Generates pink circles for any dates that will have an expense/payment
+     * that is due. Includes recurring payments.
+     * 
+     * Only displays indicators starting from the specified date of the item.
+     * 
+     * @param {Date} date 
+     */
     function generatePaymentIndicators(date) {
         getAll('expenses').then(res => {
             const dates = new Set()
@@ -717,6 +887,11 @@ if (document.getElementById('schedule-body')) {
         })
     }
 
+    /**
+     * Generates gold circles for any dates that have tasks.
+     * 
+     * @param {Date} date 
+     */
     function generateTaskIndicators(date) {
         getAll('tasks').then(res => {
             const dates = new Set()
@@ -737,6 +912,16 @@ if (document.getElementById('schedule-body')) {
         })
     }
 
+
+    /**
+     * Used to calculate the next date occurence of an expense item based on
+     * its frequency.
+     * 
+     * @param {Date} date 
+     * @param {String} frequency
+     *  
+     * @returns {Date} next occurence of payment from the specified date.
+     */
     function nextDate(date, frequency) {
         const newDate = new Date(date)
 
@@ -751,6 +936,14 @@ if (document.getElementById('schedule-body')) {
         return newDate
     }
 
+    /**
+     * Creates a request to the database for any items in the given date.
+     * 
+     * @param {Date} date 
+     * @param {String} type 
+     * 
+     * @returns {Promise} item data to be parsed externally on success
+     */
     async function getItemByDate(date, type) {
         try {
             const response = await fetch((`${url}${type}/date/${date}`), {
@@ -771,6 +964,16 @@ if (document.getElementById('schedule-body')) {
         }
     }
 
+    /**
+     * Handles the manual submission for the task form.
+     * Resets form and hides message (if displayed) on success.
+     * 
+     * @param {SubmitEvent} event 
+     * @param {HTMLElement} form 
+     * @param {String} selectedDay
+     *  
+     * @returns {null} If the task description is invalid and displays message.
+     */
     function taskFormHandler(event, form, selectedDay) {
         event.preventDefault()
 
@@ -793,6 +996,14 @@ if (document.getElementById('schedule-body')) {
         form.reset()
     }
 
+    /**
+     * Creates a post request to the database by constructing an object based
+     * on form values.
+     * Uses (parses) the title of the sidebar to set the date for the request.
+     * 
+     * @param {HTMLElement} form 
+     * @param {String} selectedDay 
+     */
     async function sendTaskItem(form, selectedDay) {
         const formData = new FormData(form)
         const type = 'tasks'
@@ -825,6 +1036,13 @@ if (document.getElementById('schedule-body')) {
         }
     }
 
+    /**
+     * Makes a request to the database to get all tasks for the given date.
+     * Lists all tasks in the sidebar.
+     * 
+     * @param {Date} date 
+     * @param {String} selectedDay 
+     */
     function displayTasks(date, selectedDay) {
         const month = (nextMonth(date)).toString().padStart(2, '0')
         const day = selectedDay.padStart(2, '0')
@@ -845,6 +1063,13 @@ if (document.getElementById('schedule-body')) {
         })
     }
 
+    /**
+     * Constructs the necessary containers to form task content.
+     * Includes remove button for the corresponding task.
+     * Creates indicators for the task.
+     * 
+     * @param {Object} task 
+     */
     function addTask(task) {
         const {task_id, description} = task
         const listElement = document.createElement('li')
@@ -866,6 +1091,9 @@ if (document.getElementById('schedule-body')) {
         updateTaskIndicator()
     }
 
+    /**
+     * Displays the 'None' label if there are no tasks in the list.
+     */
     function updateTaskNone() {
         if (taskList.children.length > 1) {
             taskNone.classList.add('hide')
@@ -874,6 +1102,10 @@ if (document.getElementById('schedule-body')) {
         }
     }
 
+    /**
+     * Used to dynamicallly display task indicators for any days that contain
+     * tasks.
+     */
     function updateTaskIndicator() {
         const day = dateTitle.textContent.split(' ')[0]
 
@@ -884,21 +1116,11 @@ if (document.getElementById('schedule-body')) {
         }        
     }
 
-    function removeTaskIndicator(day) {
-        const indicator = document.querySelector(`#day-${day} .circle-task`)
-        indicator.remove()
-    }
-
-    function addPaymentIndicator(day) {
-        const container = document.getElementById(`day-${day}`)
-        const indicator = document.createElement('div')
-        indicator.classList.add('circle-payment')
-
-        if (container.querySelector('.circle-payment') === null) {
-            container.appendChild(indicator)
-        }
-    }
-
+    /**
+     * Adds a task indicator for the given day.
+     * 
+     * @param {String} day 
+     */
     function addTaskIndicator(day) {
         const container = document.getElementById(`day-${day}`)
         const indicator = document.createElement('div')
@@ -908,7 +1130,37 @@ if (document.getElementById('schedule-body')) {
             container.appendChild(indicator)
         }
     }
+
+    /**
+     * Removes the task indicator from the specified day.
+     * 
+     * @param {String} day 
+     */
+    function removeTaskIndicator(day) {
+        const indicator = document.querySelector(`#day-${day} .circle-task`)
+        indicator.remove()
+    }
+
+    /**
+     * Adds a payment indicator for the given day.
+     * 
+     * @param {String} day 
+     */
+    function addPaymentIndicator(day) {
+        const container = document.getElementById(`day-${day}`)
+        const indicator = document.createElement('div')
+        indicator.classList.add('circle-payment')
+
+        if (container.querySelector('.circle-payment') === null) {
+            container.appendChild(indicator)
+        }
+    }
     
+    /**
+     * Deletes a task from the database based on its id.
+     * 
+     * @param {String} id 
+     */
     async function removeTask(id) {
         try {
             const response = await fetch(`${url}tasks/${id}`, {
@@ -931,8 +1183,16 @@ if (document.getElementById('schedule-body')) {
     }
 }
 
-// ----------------------------------------------------------------------------
+// Functions ------------------------------------------------------------------
 
+/**
+ * Primary request which gets all items of the specified type from the
+ * database.
+ * 
+ * @param {String} type
+ *  
+ * @returns {Promise} List of item objects to be parsed externally on success
+ */
 async function getAll(type) {
     try {
         const response = await fetch((url + type), {
