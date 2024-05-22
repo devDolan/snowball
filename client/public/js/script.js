@@ -1,8 +1,7 @@
-//const url = 'http://3.25.57.89:3000/'
+// const url = 'http://3.25.57.89:3000/'
 const url = 'http://localhost:3000/'
 
 if (document.getElementById('index-body')) {
-    console.log('this is the dashboard page')
     const incomeBtn = document.getElementById('income-btn')
     const incomeForm = document.getElementById('income')
     const expensesBtn = document.getElementById('expenses-btn')
@@ -502,30 +501,30 @@ if (document.getElementById('schedule-body')) {
     const dateLeft = document.getElementById('date-left')
     const dateRight = document.getElementById('date-right')
 
-    let date = new Date()
-    monthYear.textContent = getMonthYear(date)
+    const pageDate = new Date()
+    setMonthYear(pageDate)
 
     dateLeft.addEventListener('click', () => {
-        date.setMonth(date.getMonth() - 1)
-        monthYear.textContent = getMonthYear(date)
-        generateCalendar(date)
-        generatePaymentIndicators(date)
-        generateTaskIndicators(date)
-        updateDateClickEvents()
+        pageDate.setMonth(prevMonth(pageDate))
+        setMonthYear(pageDate)
+        generateCalendar(pageDate)
+        generatePaymentIndicators(pageDate)
+        generateTaskIndicators(pageDate)
+        updateDateClickEvents(pageDate)
     })
 
     dateRight.addEventListener('click', () => {
-        date.setMonth(date.getMonth() + 1)
-        monthYear.textContent = getMonthYear(date)
-        generateCalendar(date)
-        generatePaymentIndicators(date)
-        generateTaskIndicators(date)
-        updateDateClickEvents()
+        pageDate.setMonth(nextMonth(pageDate))
+        setMonthYear(pageDate)
+        generateCalendar(pageDate)
+        generatePaymentIndicators(pageDate)
+        generateTaskIndicators(pageDate)
+        updateDateClickEvents(pageDate)
     })
 
-    generateCalendar(date)
-    generatePaymentIndicators(date)
-    generateTaskIndicators(date)
+    generateCalendar(pageDate)
+    generatePaymentIndicators(pageDate)
+    generateTaskIndicators(pageDate)
 
     const sideBar = document.getElementById('sidebar')
     const dateTitle = document.getElementById('date-title')
@@ -536,7 +535,7 @@ if (document.getElementById('schedule-body')) {
     const taskNone = document.querySelector('#task-list .default-value')
     const taskForm = document.getElementById('task-form')
 
-    updateDateClickEvents()
+    updateDateClickEvents(pageDate)
 
     closeBtn.addEventListener('click', () => {
         sideBar.classList.add('hide')
@@ -549,14 +548,26 @@ if (document.getElementById('schedule-body')) {
 
     // Functions --------------------------------------------------------------
 
-    function getMonthYear(date) {
-        const month = date.toLocaleDateString('en-au', {month: 'long'})
-        const year = date.getFullYear()
-    
-        return `${month}, ${year}`
+    function currentDate() {
+        return new Date()
     }
 
-    function updateDateClickEvents() {
+    function prevMonth(date) {
+        newDate = new Date(date.getFullYear(), date.getMonth(), 1)
+        return newDate.getMonth() - 1
+    }
+
+    function nextMonth(date) {
+        newDate = new Date(date.getFullYear(), date.getMonth(), 1)
+        return newDate.getMonth() + 1
+    }
+
+    function setMonthYear(date) {
+        const month = date.toLocaleDateString('en-au', {month: 'long'})
+        monthYear.textContent = `${month}, ${date.getFullYear()}`
+    }
+
+    function updateDateClickEvents(date) {
         const dates = document.querySelectorAll('p')
         dates.forEach(day => {
             if (day.textContent !== '') {
@@ -591,17 +602,18 @@ if (document.getElementById('schedule-body')) {
         newTable.appendChild(dayLabels)
 
         const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
-        const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+        const lastDay = new Date(date.getFullYear(), nextMonth(date), 0)
         const firstWeekDay = (firstDay.getDay() + 6) % 7
 
-        let dayCount = 1
+        let dayCount = 0
         let start = false
         for (let i = 0; i < 5; i++) {
             const row = document.createElement('tr')
 
             for (let j = 0; j < 7; j++) {
-                if (j === firstWeekDay) {
+                if (j === firstWeekDay && dayCount === 0) {
                     start = true
+                    dayCount = 1
                 }
                 const data = document.createElement('td')
 
@@ -642,7 +654,7 @@ if (document.getElementById('schedule-body')) {
             }
 
             res.forEach(expense => {
-                const {name, amount, date} = expense
+                const {name, amount} = expense
                 const listElement = document.createElement('li')
                 listElement.textContent = `${name} - $${amount}`
 
@@ -663,17 +675,19 @@ if (document.getElementById('schedule-body')) {
         }
     }
 
-    function generatePaymentIndicators(currentDate) {
+    function generatePaymentIndicators(date) {
         getAll('expenses').then(res => {
             const dates = new Set()
+            
             res.forEach(expense => {
-                const {date, frequency} = expense
-                let first = new Date(date)
+                const frequency = expense.frequency
+                const expenseDate = expense.date
+                let first = new Date(expenseDate)
                 const weekday = first.getDay()
 
-                if (currentDate.getMonth() > first.getMonth()) {
+                if (date.getMonth() > first.getMonth()) {
                     let offset = new Date(first)
-                    while (offset.getMonth() !== currentDate.getMonth()) {
+                    while (offset.getMonth() !== date.getMonth()) {
                         offset = nextDate(offset, frequency)
                     }
 
@@ -684,11 +698,11 @@ if (document.getElementById('schedule-body')) {
                     first = offset
                 }
 
-                if (currentDate.getMonth() >= first.getMonth()) {
+                if (date.getMonth() >= first.getMonth()) {
                     dates.add(first.getDate())
 
                     let next = nextDate(first, frequency)
-                    while (next.getMonth() === currentDate.getMonth()) {
+                    while (next.getMonth() === date.getMonth()) {
                         dates.add(next.getDate())
                         next = nextDate(next, frequency)
                     }
@@ -696,25 +710,23 @@ if (document.getElementById('schedule-body')) {
             })
 
             dates.forEach(day => {
-                const container = document.getElementById(`day-${day}`)
-                const indicator = document.createElement('div')
-                indicator.classList.add('circle-payment')
-                container.appendChild(indicator)
+                addPaymentIndicator(day)
             })
         }).catch(error => {
             console.log(error)
         })
     }
 
-    function generateTaskIndicators(currentDate) {
+    function generateTaskIndicators(date) {
         getAll('tasks').then(res => {
             const dates = new Set()
             res.forEach(task => {
-                const {date} = task
-                const newDate = new Date(date)
+                const taskDate = task.date
+                const newDate = new Date(taskDate)
 
-                if (newDate.getMonth() === currentDate.getMonth())
+                if (newDate.getMonth() === date.getMonth()) {
                     dates.add(newDate.getDate())
+                }
             })
 
             dates.forEach(day => {
@@ -733,7 +745,7 @@ if (document.getElementById('schedule-body')) {
         } else if (frequency ==='fortnightly') {
             newDate.setDate(newDate.getDate() + 14)
         } else if (frequency === 'monthly') {
-            newDate.setDate(newDate.getMonth() + 1)
+            newDate.setMonth(nextMonth(newDate))
         }
         
         return newDate
@@ -788,9 +800,9 @@ if (document.getElementById('schedule-body')) {
         const jsonData = {};
         jsonData['description'] = formData.get('description')
         
-        const month = (date.getMonth() + 1).toString().padStart(2, '0')
+        const month = (pageDate.getMonth() + 1).toString().padStart(2, '0')
         const day = selectedDay.split(' ')[0].padStart(2, '0')
-        jsonData['date'] = `${date.getFullYear()}-${month}-${day}`
+        jsonData['date'] = `${pageDate.getFullYear()}-${month}-${day}`
 
         try {
             const response = await fetch((url + type), {
@@ -814,7 +826,7 @@ if (document.getElementById('schedule-body')) {
     }
 
     function displayTasks(date, selectedDay) {
-        const month = (date.getMonth() + 1).toString().padStart(2, '0')
+        const month = (nextMonth(date)).toString().padStart(2, '0')
         const day = selectedDay.padStart(2, '0')
         const searchDate = `${date.getFullYear()}-${month}-${day}`
 
@@ -875,6 +887,16 @@ if (document.getElementById('schedule-body')) {
     function removeTaskIndicator(day) {
         const indicator = document.querySelector(`#day-${day} .circle-task`)
         indicator.remove()
+    }
+
+    function addPaymentIndicator(day) {
+        const container = document.getElementById(`day-${day}`)
+        const indicator = document.createElement('div')
+        indicator.classList.add('circle-payment')
+
+        if (container.querySelector('.circle-payment') === null) {
+            container.appendChild(indicator)
+        }
     }
 
     function addTaskIndicator(day) {
