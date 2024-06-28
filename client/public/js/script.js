@@ -1,8 +1,5 @@
-// Dedicated
-const url = 'http://3.25.57.89:3000/'
-
 // Local
-// const url = 'http://localhost:3000/'
+const url = 'http://localhost:3000/'
 
 // Index page -----------------------------------------------------------------
 if (document.getElementById('index-body')) {
